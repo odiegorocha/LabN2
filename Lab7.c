@@ -22,6 +22,16 @@ struct Mensalidade {
     enum Plano tipoPlano;
 };
 
+int extrairDia(char data[]);
+int extrairMes(char data[]);
+int extrairAno(char data[]);
+int diasMes(int mes);
+int calcularDiferencaDias(char data1[], char data2[]);
+void mostrarConsultas(struct Consulta c[], int n);
+void mostrarMensalidades(struct Mensalidade m[], int n);
+void salvarDados(struct Consulta c[], int qtdC, struct Mensalidade m[], int qtdM);
+void carregarDados(struct Consulta c[], int *qtdC, struct Mensalidade m[], int *qtdM);
+
 int extrairDia(char data[]) {
     char d[3];
     strncpy(d, data, 2);
@@ -44,33 +54,23 @@ int extrairAno(char data[]) {
 }
 
 int diasMes(int mes) {
-    if (mes == 2) {
-        return 28;
-    } else if (mes == 4 || mes == 6 || mes == 9 || mes == 11) {
-        return 30;
-    } else {
-        return 31;
-    }
+    if (mes == 2) return 28;
+    else if (mes == 4 || mes == 6 || mes == 9 || mes == 11) return 30;
+    else return 31;
 }
 
 int calcularDiferencaDias(char data1[], char data2[]) {
     int d1 = extrairDia(data1);
     int m1 = extrairMes(data1);
     int a1 = extrairAno(data1);
-
     int d2 = extrairDia(data2);
     int m2 = extrairMes(data2);
     int a2 = extrairAno(data2);
-
-    if (a1 == a2 && m1 == m2) {
-        return d2 - d1;
-    }
+    if (a1 == a2 && m1 == m2) return d2 - d1;
 
     int dias = 0;
-
     dias += diasMes(m1) - d1;
     m1++;
-
     while (a1 < a2 || (a1 == a2 && m1 < m2)) {
         dias += diasMes(m1);
         m1++;
@@ -79,9 +79,7 @@ int calcularDiferencaDias(char data1[], char data2[]) {
             a1++;
         }
     }
-
     dias += d2;
-
     return dias;
 }
 
@@ -100,11 +98,8 @@ void agendar(struct Consulta consultas[], int *qtd) {
         scanf("%d", &esp);
     } while (esp != 1 && esp != 2);
 
-    if (esp == 1) {
-        strcpy(consultas[*qtd].especialidade, "Clinico");
-    } else {
-        strcpy(consultas[*qtd].especialidade, "Pediatra");
-    }
+    if (esp == 1) strcpy(consultas[*qtd].especialidade, "Clinico");
+    else strcpy(consultas[*qtd].especialidade, "Pediatra");
 
     int loc;
     do {
@@ -112,132 +107,56 @@ void agendar(struct Consulta consultas[], int *qtd) {
         scanf("%d", &loc);
     } while (loc != 1 && loc != 2);
 
-    if (loc == 1) {
-        strcpy(consultas[*qtd].localidade, "Ceara");
-    } else {
-        strcpy(consultas[*qtd].localidade, "Maranhao");
-    }
+    if (loc == 1) strcpy(consultas[*qtd].localidade, "Ceara");
+    else strcpy(consultas[*qtd].localidade, "Maranhao");
 
     (*qtd)++;
 }
 
-void editarConsulta(struct Consulta consultas[], int qtd) {
-    if (qtd == 0) {
-        printf("\nSem consultas.\n");
-        return;
-    }
-
-    mostrarConsultas(consultas, qtd);
-    int i;
-    printf("Indice da consulta (0 a %d): ", qtd - 1);
-    scanf("%d", &i);
-    if (i < 0 || i >= qtd) {
-        printf("Indice invalido.\n");
-        return;
-    }
-
-    printf("Nova data (DDMMAAAA): ");
-    scanf(" %8[^\n]", consultas[i].data);
-
-    int esp;
-    do {
-        printf("Especialidade:\n1 - Clinico\n2 - Pediatra\nOpcao: ");
-        scanf("%d", &esp);
-    } while (esp != 1 && esp != 2);
-
-    if (esp == 1) {
-        strcpy(consultas[i].especialidade, "Clinico");
-    } else {
-        strcpy(consultas[i].especialidade, "Pediatra");
-    }
-
-    int loc;
-    do {
-        printf("Localidade:\n1 - Ceara\n2 - Maranhao\nOpcao: ");
-        scanf("%d", &loc);
-    } while (loc != 1 && loc != 2);
-
-    if (loc == 1) {
-        strcpy(consultas[i].localidade, "Ceara");
-    } else {
-        strcpy(consultas[i].localidade, "Maranhao");
-    }
-}
-
-void deletarConsulta(struct Consulta consultas[], int *qtd) {
-    if (*qtd == 0) {
-        printf("\nSem consultas.\n");
-        return;
-    }
-
-    mostrarConsultas(consultas, *qtd);
-    int i;
-    printf("Indice da consulta (0 a %d): ", *qtd - 1);
-    scanf("%d", &i);
-    if (i < 0 || i >= *qtd) {
-        printf("Indice invalido.\n");
-        return;
-    }
-
-    for (int j = i; j < *qtd - 1; j++) {
-        consultas[j] = consultas[j + 1];
-    }
-    (*qtd)--;
-}
-
 void ordenarData(struct Consulta c[], int n) {
     struct Consulta aux;
-    for (int i = 0; i < n - 1; i++) {
-        for (int j = i + 1; j < n; j++) {
+    for (int i = 0; i < n - 1; i++)
+        for (int j = i + 1; j < n; j++)
             if (strcmp(c[i].data, c[j].data) > 0) {
                 aux = c[i];
                 c[i] = c[j];
                 c[j] = aux;
             }
-        }
-    }
 }
 
 void ordenarEsp(struct Consulta c[], int n) {
     struct Consulta aux;
-    for (int i = 0; i < n - 1; i++) {
-        for (int j = i + 1; j < n; j++) {
+    for (int i = 0; i < n - 1; i++)
+        for (int j = i + 1; j < n; j++)
             if (strcmp(c[i].especialidade, c[j].especialidade) > 0) {
                 aux = c[i];
                 c[i] = c[j];
                 c[j] = aux;
             }
-        }
-    }
 }
 
 void ordenarLoc(struct Consulta c[], int n) {
     struct Consulta aux;
-    for (int i = 0; i < n - 1; i++) {
-        for (int j = i + 1; j < n; j++) {
+    for (int i = 0; i < n - 1; i++)
+        for (int j = i + 1; j < n; j++)
             if (strcmp(c[i].localidade, c[j].localidade) > 0) {
                 aux = c[i];
                 c[i] = c[j];
                 c[j] = aux;
             }
-        }
-    }
 }
 
 void agruparEspData(struct Consulta c[], int n) {
     ordenarEsp(c, n);
     struct Consulta aux;
-    for (int i = 0; i < n - 1; i++) {
-        for (int j = i + 1; j < n; j++) {
-            if (strcmp(c[i].especialidade, c[j].especialidade) == 0) {
+    for (int i = 0; i < n - 1; i++)
+        for (int j = i + 1; j < n; j++)
+            if (strcmp(c[i].especialidade, c[j].especialidade) == 0)
                 if (strcmp(c[i].data, c[j].data) > 0) {
                     aux = c[i];
                     c[i] = c[j];
                     c[j] = aux;
                 }
-            }
-        }
-    }
 }
 
 void mostrarConsultas(struct Consulta c[], int n) {
@@ -247,34 +166,22 @@ void mostrarConsultas(struct Consulta c[], int n) {
     }
 
     printf("\nData      Especialidade       Localidade\n");
-    for (int i = 0; i < n; i++) {
+    for (int i = 0; i < n; i++)
         printf("%-9s %-18s %-10s\n", c[i].data, c[i].especialidade, c[i].localidade);
-    }
 }
 
-void menuConsultas(struct Consulta c[], int *n) {
+void menuConsultas(struct Consulta c[], int n) {
     int op;
     do {
-        printf("\n1 - Por data\n2 - Por esp.\n3 - Por loc.\n4 - Agrupar\n5 - Editar\n6 - Deletar\n0 - Voltar\nOpcao: ");
+        printf("\n1 - Por data\n2 - Por esp.\n3 - Por loc.\n4 - Agrupar\n0 - Voltar\nOpcao: ");
         scanf("%d", &op);
 
-        if (op == 1) {
-            ordenarData(c, *n);
-            mostrarConsultas(c, *n);
-        } else if (op == 2) {
-            ordenarEsp(c, *n);
-            mostrarConsultas(c, *n);
-        } else if (op == 3) {
-            ordenarLoc(c, *n);
-            mostrarConsultas(c, *n);
-        } else if (op == 4) {
-            agruparEspData(c, *n);
-            mostrarConsultas(c, *n);
-        } else if (op == 5) {
-            editarConsulta(c, *n);
-        } else if (op == 6) {
-            deletarConsulta(c, n);
-        }
+        if (op == 1) ordenarData(c, n);
+        else if (op == 2) ordenarEsp(c, n);
+        else if (op == 3) ordenarLoc(c, n);
+        else if (op == 4) agruparEspData(c, n);
+
+        if (op >= 1 && op <= 4) mostrarConsultas(c, n);
     } while (op != 0);
 }
 
@@ -303,65 +210,7 @@ void cadastrarMensalidade(struct Mensalidade m[], int *qtd) {
     } while (tipo < 1 || tipo > 3);
 
     m[*qtd].tipoPlano = tipo;
-
     (*qtd)++;
-}
-
-void editarMensalidade(struct Mensalidade m[], int qtd) {
-    if (qtd == 0) {
-        printf("\nSem mensalidades.\n");
-        return;
-    }
-
-    mostrarMensalidades(m, qtd);
-    int i;
-    printf("Indice da mensalidade (0 a %d): ", qtd - 1);
-    scanf("%d", &i);
-    if (i < 0 || i >= qtd) {
-        printf("Indice invalido.\n");
-        return;
-    }
-
-    printf("Nova data conta (DDMMAAAA): ");
-    scanf(" %8[^\n]", m[i].dataConta);
-
-    printf("Nova data venc. (DDMMAAAA): ");
-    scanf(" %8[^\n]", m[i].dataVencimento);
-
-    printf("Novo valor: ");
-    scanf("%f", &m[i].valor);
-
-    printf("Novo juros fixo: ");
-    scanf("%f", &m[i].juros);
-
-    int tipo;
-    do {
-        printf("Plano:\n1 - Normal\n2 - Prioridade\n3 - Plus\nOpcao: ");
-        scanf("%d", &tipo);
-    } while (tipo < 1 || tipo > 3);
-
-    m[i].tipoPlano = tipo;
-}
-
-void deletarMensalidade(struct Mensalidade m[], int *qtd) {
-    if (*qtd == 0) {
-        printf("\nSem mensalidades.\n");
-        return;
-    }
-
-    mostrarMensalidades(m, *qtd);
-    int i;
-    printf("Indice da mensalidade (0 a %d): ", *qtd - 1);
-    scanf("%d", &i);
-    if (i < 0 || i >= *qtd) {
-        printf("Indice invalido.\n");
-        return;
-    }
-
-    for (int j = i; j < *qtd - 1; j++) {
-        m[j] = m[j + 1];
-    }
-    (*qtd)--;
 }
 
 void mostrarMensalidades(struct Mensalidade m[], int n) {
@@ -373,14 +222,9 @@ void mostrarMensalidades(struct Mensalidade m[], int n) {
     printf("\nData Conta Vencimento  Valor   Juros  Plano\n");
     for (int i = 0; i < n; i++) {
         char planoStr[15];
-
-        if (m[i].tipoPlano == NORMAL) {
-            strcpy(planoStr, "Normal");
-        } else if (m[i].tipoPlano == PRIORIDADE) {
-            strcpy(planoStr, "Prioridade");
-        } else {
-            strcpy(planoStr, "Plus");
-        }
+        if (m[i].tipoPlano == NORMAL) strcpy(planoStr, "Normal");
+        else if (m[i].tipoPlano == PRIORIDADE) strcpy(planoStr, "Prioridade");
+        else strcpy(planoStr, "Plus");
 
         printf("%-10s %-10s %.2f   %.2f   %s\n",
                m[i].dataConta,
@@ -402,23 +246,13 @@ void mostrarMensalidadesAtualizadas(struct Mensalidade m[], int n) {
         int atraso = calcularDiferencaDias(m[i].dataVencimento, dataAtual);
         float valorFinal = m[i].valor + m[i].juros;
 
-        if (atraso > 0) {
-            valorFinal += m[i].valor * 0.01 * atraso;
-        }
+        if (atraso > 0) valorFinal += m[i].valor * 0.01 * atraso;
+        if (atraso < 0) atraso = 0;
 
         char planoStr[15];
-
-        if (m[i].tipoPlano == NORMAL) {
-            strcpy(planoStr, "Normal");
-        } else if (m[i].tipoPlano == PRIORIDADE) {
-            strcpy(planoStr, "Prioridade");
-        } else {
-            strcpy(planoStr, "Plus");
-        }
-
-        if (atraso < 0) {
-            atraso = 0;
-        }
+        if (m[i].tipoPlano == NORMAL) strcpy(planoStr, "Normal");
+        else if (m[i].tipoPlano == PRIORIDADE) strcpy(planoStr, "Prioridade");
+        else strcpy(planoStr, "Plus");
 
         printf("%-10s %-10s %.2f  %4d %-10s %.2f\n",
                m[i].dataConta,
@@ -430,54 +264,46 @@ void mostrarMensalidadesAtualizadas(struct Mensalidade m[], int n) {
     }
 }
 
-void menuVisualizar(struct Consulta c[], int *qtdC, struct Mensalidade m[], int *qtdM) {
+void menuVisualizar(struct Consulta c[], int qtdC, struct Mensalidade m[], int qtdM) {
     int op;
     do {
-        printf("\n1 - Consultas\n2 - Mensalidades\n3 - Mensalidades atualizadas\n4 - Editar mensalidade\n5 - Deletar mensalidade\n0 - Voltar\nOpcao: ");
+        printf("\n1 - Consultas\n2 - Mensalidades\n3 - Mensalidades atualizadas\n0 - Voltar\nOpcao: ");
         scanf("%d", &op);
 
-        if (op == 1) {
-            menuConsultas(c, qtdC);
-        } else if (op == 2) {
-            mostrarMensalidades(m, *qtdM);
-        } else if (op == 3) {
-            mostrarMensalidadesAtualizadas(m, *qtdM);
-        } else if (op == 4) {
-            editarMensalidade(m, *qtdM);
-        } else if (op == 5) {
-            deletarMensalidade(m, qtdM);
-        }
+        if (op == 1) menuConsultas(c, qtdC);
+        else if (op == 2) mostrarMensalidades(m, qtdM);
+        else if (op == 3) mostrarMensalidadesAtualizadas(m, qtdM);
     } while (op != 0);
 }
 
-void salvarDados(struct Consulta consultas[], int qtdC, struct Mensalidade mensalidades[], int qtdM) {
+void salvarDados(struct Consulta c[], int qtdC, struct Mensalidade m[], int qtdM) {
     FILE *f1 = fopen("consultas.dat", "wb");
     if (f1 != NULL) {
         fwrite(&qtdC, sizeof(int), 1, f1);
-        fwrite(consultas, sizeof(struct Consulta), qtdC, f1);
+        fwrite(c, sizeof(struct Consulta), qtdC, f1);
         fclose(f1);
     }
 
     FILE *f2 = fopen("mensalidades.dat", "wb");
     if (f2 != NULL) {
         fwrite(&qtdM, sizeof(int), 1, f2);
-        fwrite(mensalidades, sizeof(struct Mensalidade), qtdM, f2);
+        fwrite(m, sizeof(struct Mensalidade), qtdM, f2);
         fclose(f2);
     }
 }
 
-void carregarDados(struct Consulta consultas[], int *qtdC, struct Mensalidade mensalidades[], int *qtdM) {
+void carregarDados(struct Consulta c[], int *qtdC, struct Mensalidade m[], int *qtdM) {
     FILE *f1 = fopen("consultas.dat", "rb");
     if (f1 != NULL) {
         fread(qtdC, sizeof(int), 1, f1);
-        fread(consultas, sizeof(struct Consulta), *qtdC, f1);
+        fread(c, sizeof(struct Consulta), *qtdC, f1);
         fclose(f1);
     }
 
     FILE *f2 = fopen("mensalidades.dat", "rb");
     if (f2 != NULL) {
         fread(qtdM, sizeof(int), 1, f2);
-        fread(mensalidades, sizeof(struct Mensalidade), *qtdM, f2);
+        fread(m, sizeof(struct Mensalidade), *qtdM, f2);
         fclose(f2);
     }
 }
@@ -496,13 +322,9 @@ int main() {
         printf("\n1 - Agendar\n2 - Financeiro\n3 - Visualizar\n0 - Sair\nOpcao: ");
         scanf("%d", &op);
 
-        if (op == 1) {
-            agendar(consultas, &qtdC);
-        } else if (op == 2) {
-            cadastrarMensalidade(mensalidades, &qtdM);
-        } else if (op == 3) {
-            menuVisualizar(consultas, &qtdC, mensalidades, &qtdM);
-        }
+        if (op == 1) agendar(consultas, &qtdC);
+        else if (op == 2) cadastrarMensalidade(mensalidades, &qtdM);
+        else if (op == 3) menuVisualizar(consultas, qtdC, mensalidades, qtdM);
     } while (op != 0);
 
     salvarDados(consultas, qtdC, mensalidades, qtdM);
