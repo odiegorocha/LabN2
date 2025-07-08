@@ -7,15 +7,18 @@ int main() {
     int numero, i, indice = -1, indice_maior = 0;
 
     srand(time(NULL));
-
     for (i = 0; i < 50; i++) {
         lista[i] = rand() % 100;
-        printf("%d ", lista[i]);
     }
-    printf("\n");
 
     printf("Digite um número: ");
     scanf("%d", &numero);
+
+    printf("Lista gerada:\n");
+    for (i = 0; i < 50; i++) {
+        printf("%d ", lista[i]);
+    }
+    printf("\n");
 
     for (i = 0; i < 50; i++) {
         if (lista[i] == numero) {
@@ -33,7 +36,7 @@ int main() {
     if (indice != -1) {
         printf("Índice do número %d: %d\n", numero, indice);
     } else {
-        printf("Número %d nao encontrado: -1.\n", numero);
+        printf("Número %d não encontrado: -1.\n", numero);
     }
 
     printf("Índice do maior valor (%d): %d\n", lista[indice_maior], indice_maior);
