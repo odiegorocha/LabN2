@@ -1,41 +1,45 @@
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 int main() {
-    short s = -1;
-    for (int i = 0; i < 32; i++) {
-        if (s + 1 > s)
-            s++;
-        else
-            break;
-    }
-    printf("Máximo short: %d\n", s);
+    int lista[50];
+    int numero, i, indice = -1, indice_maior = 0;
 
-    long l = -1;
-    for (int i = 0; i < 32; i++) {
-        if (l + 1 > l)
-            l++;
-        else
-            break;
+    srand(time(NULL));
+    for (i = 0; i < 50; i++) {
+        lista[i] = rand() % 100;
     }
-    printf("Máximo long: %ld\n", l);
 
-    long long ll = -1;
-    for (int i = 0; i < 32; i++) {
-        if (ll + 1 > ll)
-            ll++;
-        else
-            break;
-    }
-    printf("Máximo long long: %lld\n", ll);
+    printf("Digite um número: ");
+    scanf("%d", &numero);
 
-    unsigned long ul = 0;
-    for (int i = 0; i < 32; i++) {
-        if (ul + 1 > ul)
-            ul++;
-        else
-            break;
+    printf("Lista gerada:\n");
+    for (i = 0; i < 50; i++) {
+        printf("%d ", lista[i]);
     }
-    printf("Máximo unsigned long: %lu\n", ul);
+    printf("\n");
+
+    for (i = 0; i < 50; i++) {
+        if (lista[i] == numero) {
+            indice = i;
+            break;
+        }
+    }
+
+    for (i = 1; i < 50; i++) {
+        if (lista[i] > lista[indice_maior]) {
+            indice_maior = i;
+        }
+    }
+
+    if (indice != -1) {
+        printf("Índice do número %d: %d\n", numero, indice);
+    } else {
+        printf("Número %d não encontrado: -1.\n", numero);
+    }
+
+    printf("Índice do maior valor (%d): %d\n", lista[indice_maior], indice_maior);
 
     return 0;
 }
