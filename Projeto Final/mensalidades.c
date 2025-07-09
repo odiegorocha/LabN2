@@ -4,8 +4,6 @@
 #include "mensalidades.h"
 #include "util.h"
 
-char dataAtual[9];
-
 void cadastrarMensalidade(struct Mensalidade m[], int *qtd) {
     if (*qtd >= TAM) {
         printf("\nLimite atingido.\n");
