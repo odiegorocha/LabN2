@@ -1,5 +1,5 @@
 # Nome do executável
-TARGET = programa
+TARGET = programao
 
 # Compilador e flags
 CC = gcc
@@ -14,4 +14,4 @@ $(TARGET): $(SRCS)
 
 # Limpeza
 clean:
-	rm -f *.o $(TARGET)
+	rm -f *.o programao
